@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B3DD161-3F65-4FA2-8FCF-66D0BA9E750F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{193C43BB-08A1-4AB1-8DD1-E11AA3ECBBEE}"
+	ProjectSection(SolutionItems) = preProject
+		Deployment\Deployment.btdfproj = Deployment\Deployment.btdfproj
+		Deployment\InstallWizard.xml = Deployment\InstallWizard.xml
+		Deployment\License.rtf = Deployment\License.rtf
+		Deployment\PortBindingsMaster.xml = Deployment\PortBindingsMaster.xml
+		Deployment\SettingsFileGenerator.xml = Deployment\SettingsFileGenerator.xml
+		Deployment\UnInstallWizard.xml = Deployment\UnInstallWizard.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureClaimCheck", "AzureClaimCheck\AzureClaimCheck.btproj", "{B277E0C8-6DFB-4267-95AE-0CC25E7AF158}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureClaimCheckPipelineComponent", "AzureClaimCheckPipelineComponent\AzureClaimCheckPipelineComponent.csproj", "{09E887E5-29EA-4BD3-86B1-2BDCF0F8FD05}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B277E0C8-6DFB-4267-95AE-0CC25E7AF158}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B277E0C8-6DFB-4267-95AE-0CC25E7AF158}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B277E0C8-6DFB-4267-95AE-0CC25E7AF158}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B277E0C8-6DFB-4267-95AE-0CC25E7AF158}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B277E0C8-6DFB-4267-95AE-0CC25E7AF158}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B277E0C8-6DFB-4267-95AE-0CC25E7AF158}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{09E887E5-29EA-4BD3-86B1-2BDCF0F8FD05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09E887E5-29EA-4BD3-86B1-2BDCF0F8FD05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09E887E5-29EA-4BD3-86B1-2BDCF0F8FD05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09E887E5-29EA-4BD3-86B1-2BDCF0F8FD05}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{193C43BB-08A1-4AB1-8DD1-E11AA3ECBBEE} = {6B3DD161-3F65-4FA2-8FCF-66D0BA9E750F}
+	EndGlobalSection
+EndGlobal
