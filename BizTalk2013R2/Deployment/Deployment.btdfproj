@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  Deployment Framework for BizTalk
+  Copyright (C) 2008-15 Thomas F. Abraham, 2004-08 Scott Colestock
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Installer" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x86</Platform>
+    <SchemaVersion>1.0</SchemaVersion>
+    <ProjectName>AzureClaimCheck</ProjectName>
+    <ProjectVersion>1.0</ProjectVersion>
+    <IncludeSchemas>True</IncludeSchemas>
+    <IncludeOrchestrations>False</IncludeOrchestrations>
+    <IncludeTransforms>False</IncludeTransforms>
+    <IncludePipelines>False</IncludePipelines>
+    <IncludeComponents>True</IncludeComponents>
+    <IncludePipelineComponents>True</IncludePipelineComponents>
+    <IncludeCustomFunctoids>False</IncludeCustomFunctoids>
+    <IncludeVocabAndRules>False</IncludeVocabAndRules>
+    <IncludeVirtualDirectories>False</IncludeVirtualDirectories>
+    <IncludeMessagingBindings>True</IncludeMessagingBindings>
+    <IncludeDeploymentTest>False</IncludeDeploymentTest>
+    <Includelog4net>False</Includelog4net>
+    <IncludeSSO>True</IncludeSSO>
+    <IncludeEsbItineraries>False</IncludeEsbItineraries>
+    <IncludeBam>False</IncludeBam>
+    <IncludeInstallUtilForComponents>False</IncludeInstallUtilForComponents>
+    <UsingMasterBindings>True</UsingMasterBindings>
+    <RequireXmlPreprocessDirectives>False</RequireXmlPreprocessDirectives>
+    <ApplyXmlEscape>True</ApplyXmlEscape>
+    <IncludeSettingsSpreadsheetInMsi>True</IncludeSettingsSpreadsheetInMsi>
+    <SkipIISReset>True</SkipIISReset>
+    <SkipHostInstancesRestart>False</SkipHostInstancesRestart>
+    <StartApplicationOnDeploy>True</StartApplicationOnDeploy>
+    <EnableAllReceiveLocationsOnDeploy>True</EnableAllReceiveLocationsOnDeploy>
+    <StartReferencedApplicationsOnDeploy>True</StartReferencedApplicationsOnDeploy>
+    <UseIsolatedAppDomain>False</UseIsolatedAppDomain>
+    <EnableBizTalkExtendedLogging>False</EnableBizTalkExtendedLogging>
+    <EnableBizTalkAssemblyValidation>False</EnableBizTalkAssemblyValidation>
+    <EnableBizTalkCorrelationValidation>False</EnableBizTalkCorrelationValidation>
+    <EnableBizTalkSchemaValidation>False</EnableBizTalkSchemaValidation>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Properties related to building an MSI for server deployments -->
+    <!-- BizTalk App Version Upgrade -->
+    <!--   For each new product release to be deployed to your BizTalk servers: -->
+    <!--     1) Increment ProductVersion -->
+    <!--     2) Generate a new GUID and update ProductId with the new GUID -->
+    <!--   This allows the new MSI to automatically uninstall (not undeploy!) the old MSI and install the new one. -->
+    <ProductVersion>1.0.0</ProductVersion>
+    <ProductId>c60eac86-9fbf-42ce-a725-52607bb58638</ProductId>
+    <!-- BizTalk App Version Upgrade -->
+    <ProductName>AzureClaimCheck for BizTalk $(ProductVersion)</ProductName>
+    <Manufacturer>Deployment Framework User</Manufacturer>
+    <BizTalkAppDescription>Version: $(ProductVersion) - Deployed: $([System.DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss"))</BizTalkAppDescription>
+    <DeveloperPreProcessSettings Condition="'$(IsInVSTSBuild)' == 'True'">$(MSBuildProjectDirectory)\EnvironmentSettings\Exported_BuildSettings.xml</DeveloperPreProcessSettings>
+    <!-- NEVER change the ProductUpgradeCode. -->
+    <ProductUpgradeCode>a007abff-2170-44b3-8d16-0074571d9516</ProductUpgradeCode>
+  </PropertyGroup>
+  <!-- Under TFS Team Build, set CustomizableOutDir property to true in TFS 2005/2008/2010 UpgradeTemplate. -->
+  <!-- With a workflow build, copy the default template then modify the MSBuild task for the solution build. Set OutDir to blank and -->
+  <!-- CommandLineArguments to String.Format("/p:SkipInvalidConfigurations=true;TeamBuildOutDir=""{0}"" {1}", BinariesDirectory, MSBuildArguments). -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DeploymentFrameworkTargetsPath>$(MSBuildExtensionsPath)\DeploymentFrameworkForBizTalk\5.0\</DeploymentFrameworkTargetsPath>
+    <OutputPath Condition="'$(TeamBuildOutDir)' == ''">bin\Debug\</OutputPath>
+    <OutputPath Condition="'$(TeamBuildOutDir)' != ''">$(TeamBuildOutDir)</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DeploymentFrameworkTargetsPath>$(MSBuildExtensionsPath)\DeploymentFrameworkForBizTalk\5.0\</DeploymentFrameworkTargetsPath>
+    <OutputPath Condition="'$(TeamBuildOutDir)' == ''">bin\Release\</OutputPath>
+    <OutputPath Condition="'$(TeamBuildOutDir)' != ''">$(TeamBuildOutDir)</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Server'">
+    <DeploymentFrameworkTargetsPath>Framework\</DeploymentFrameworkTargetsPath>
+    <!-- Get our PDBs into the GAC so we get file/line number information in stack traces. -->
+    <DeployPDBsToGac>false</DeployPDBsToGac>
+  </PropertyGroup>
+  <ItemGroup>
+    <PropsFromEnvSettings Include="SsoAppUserGroup;SsoAppAdminGroup;BizTalkEnvironment" />
+  </ItemGroup>
+  <ItemGroup>
+    <BizTalkHosts Include="BizTalkServerApplication" />
+  </ItemGroup>
+  <!-- !!! TODO !!! -->
+  <!-- Add ItemGroup elements that contain one or more Schemas, Orchestrations, Transforms, etc. elements that describe -->
+  <!-- the specific artifacts in your solution that need to be deployed. Use IntelliSense as a guide. -->
+  <ItemGroup>
+    <Components Include="Microsoft.WindowsAzure.Storage.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </Components>
+    <Components Include="Newtonsoft.Json.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </Components>
+    <Components Include="Microsoft.Azure.KeyVault.Core.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </Components>
+    <Components Include="Microsoft.Azure.KeyVault.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </Components>
+    <Components Include="Microsoft.Azure.KeyVault.WebKey.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </Components>
+    <Components Include="Microsoft.Rest.ClientRuntime.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </Components>
+    <Components Include="Microsoft.Rest.ClientRuntime.Azure.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </Components>
+    <Components Include="Microsoft.IdentityModel.Clients.ActiveDirectory.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </Components>
+  </ItemGroup>
+  <ItemGroup>
+    <PipelineComponents Include="AzureClaimCheckPipelineComponent.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </PipelineComponents>
+  </ItemGroup>
+  <ItemGroup>
+    <Schemas Include="AzureClaimCheck.dll">
+      <LocationPath>..\AzureClaimCheck\bin\$(Configuration)</LocationPath>
+    </Schemas>
+  </ItemGroup>
+  <!-- !!! TODO !!! -->
+  <Import Project="$(DeploymentFrameworkTargetsPath)BizTalkDeploymentFramework.targets" />
+  <!--
+    The Deployment Framework automatically packages most files into the server install MSI.
+    However, if there are special folders that you need to include in the MSI, you can
+    copy them to the folder $(RedistDir) in the CustomRedist target.
+    To include individual files, add an ItemGroup with AdditionalFiles elements.
+  -->
+  <Target Name="CustomRedist">
+  </Target>
+
+  <ItemGroup>
+    <AppsToRemove Include="EventGridTest" />
+  </ItemGroup>
+
+  <Target Name="CustomPostInitialize" Outputs="%(AppsToRemove.Identity)" Condition="'@(AppsToRemove)' != ''" >
+    <!-- add the control / execute / terminate in here-->
+    <Message Text="Removing Application - %(AppsToRemove.Identity)" Importance="High" />
+    <GetBizTalkAppExists ApplicationName="%(AppsToRemove.Identity)">
+      <Output TaskParameter="AppExists" PropertyName="AppExists1" />
+    </GetBizTalkAppExists>
+    <ControlBizTalkApp ApplicationName="%(AppsToRemove.Identity)" StopOption="$(ControlBizTalkAppStopOption)" Condition="'$(AppExists1)' == 'true'" ContinueOnError="true"/>
+    <TerminateServiceInstances Application="%(AppsToRemove.Identity)" />
+    <Exec Command="BTSTask.exe RemoveApp -ApplicationName:&quot;%(AppsToRemove.Identity)&quot;" Condition="'$(AppExists1)' == 'true'" ContinueOnError="true"/>
+  </Target>
+</Project>
