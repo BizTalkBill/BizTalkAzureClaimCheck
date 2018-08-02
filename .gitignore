@@ -240,3 +240,15 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/BizTalk2016/AzureClaimCheck/EventGridTest.btp.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckXMLSend.btp.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckXMLReceive.btp.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckSend.btp.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckSBProperties.xsd.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckSBMessage.xsd.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckReceive.btp.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckProperties.xsd.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckJSONSend.btp.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckJSONReceive.btp.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckFFSend.btp.cs
+/BizTalk2016/AzureClaimCheck/AzureClaimCheckFFReceive.btp.cs
