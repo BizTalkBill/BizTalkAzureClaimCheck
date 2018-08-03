@@ -169,13 +169,6 @@
     </Pipeline>
   </ItemGroup>
   <ItemGroup>
-    <Pipeline Include="EventGridTest.btp">
-      <TypeName>EventGridTest</TypeName>
-      <Namespace>AzureClaimCheck</Namespace>
-      <SubType>Task</SubType>
-    </Pipeline>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.6 %28x86 and x64%29</ProductName>
