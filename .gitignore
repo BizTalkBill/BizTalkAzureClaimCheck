@@ -261,3 +261,7 @@ ModelManifest.xml
 /BizTalk2016/AzureClaimCheck/AzureClaimCheckJSONReceive.btp.cs
 /BizTalk2016/AzureClaimCheck/AzureClaimCheckFFSend.btp.cs
 /BizTalk2016/AzureClaimCheck/AzureClaimCheckFFReceive.btp.cs
+/BizTalk2016/Deployment/EnvironmentSettings/BTTEST.xml
+/BizTalk2016/Deployment/EnvironmentSettings/Exported_BuildSettings.xml
+/BizTalk2016/Deployment/EnvironmentSettings/Exported_LocalSettings.xml
+/BizTalk2016/Deployment/EnvironmentSettings/Exported_RMSettings.xml

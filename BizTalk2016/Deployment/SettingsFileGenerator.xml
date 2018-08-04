@@ -7,17 +7,17 @@
  xmlns:html="http://www.w3.org/TR/REC-html40">
  <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
   <Created>2014-03-24T21:26:46Z</Created>
-  <Version>15.00</Version>
+  <Version>16.00</Version>
  </DocumentProperties>
  <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
   <AllowPNG/>
   <RemovePersonalInformation/>
  </OfficeDocumentSettings>
  <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-  <WindowHeight>11790</WindowHeight>
+  <WindowHeight>11580</WindowHeight>
   <WindowWidth>24210</WindowWidth>
-  <WindowTopX>0</WindowTopX>
-  <WindowTopY>0</WindowTopY>
+  <WindowTopX>32767</WindowTopX>
+  <WindowTopY>32767</WindowTopY>
   <ProtectStructure>False</ProtectStructure>
   <ProtectWindows>False</ProtectWindows>
  </ExcelWorkbook>
@@ -51,13 +51,24 @@
    <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="16" ss:Color="#000000"
     ss:Bold="1"/>
   </Style>
+  <Style ss:ID="s72" ss:Parent="s63">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
  </Styles>
  <Worksheet ss:Name="Settings">
-  <Table ss:ExpandedColumnCount="6" ss:ExpandedRowCount="12" x:FullColumns="1"
+  <Table ss:ExpandedColumnCount="6" ss:ExpandedRowCount="33" x:FullColumns="1"
    x:FullRows="1">
-   <Column ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="161.25"/>
-   <Column ss:AutoFitWidth="0" ss:Width="161.25" ss:Span="3"/>
-   <Column ss:Index="6" ss:Width="121.5"/>
+   <Column ss:StyleID="s63" ss:Width="213.75"/>
+   <Column ss:Width="494.25"/>
+   <Column ss:AutoFitWidth="0" ss:Width="126.75"/>
+   <Column ss:AutoFitWidth="0" ss:Width="141.75"/>
+   <Column ss:AutoFitWidth="0" ss:Width="161.25"/>
+   <Column ss:Width="177.75"/>
    <Row ss:AutoFitHeight="0" ss:Height="21">
     <Cell ss:StyleID="s67"><Data ss:Type="String">Environment Settings</Data></Cell>
     <Cell ss:StyleID="s62"/>
@@ -139,9 +150,114 @@
     <Cell><Data ss:Type="String">#{BizTalkEnvironment}</Data></Cell>
    </Row>
    <Row>
-    <Cell><Data ss:Type="String">fromAzureSharedAccessKey</Data></Cell>
+    <Cell><Data ss:Type="String">toBizTalkServiceBusNamespace</Data></Cell>
+    <Cell><Data ss:Type="String">BizTalkToAzurePOC.servicebus.windows.net</Data></Cell>
+    <Cell ss:Index="6"><Data ss:Type="String">#{toBizTalkServiceBusNamespace}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">toBizTalkSBQueueName</Data></Cell>
+    <Cell><Data ss:Type="String">toBizTalk</Data></Cell>
+    <Cell ss:Index="6"><Data ss:Type="String">#{toBizTalkSBQueueName}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">toBizTalkSBSharedAccessKeyName</Data></Cell>
+    <Cell><Data ss:Type="String">RootManageSharedAccessKey</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{toBizTalkSBSharedAccessKeyName}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">toBizTalkSBSharedAccessKey</Data></Cell>
     <Cell><Data ss:Type="String">xFZpNFtLXAnFMw/Hno9wL55y6BT1T4bMXkhy8t/gXKk=</Data></Cell>
-    <Cell ss:Index="6"><Data ss:Type="String">#{fromAzureSharedAccessKey}</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{toBizTalkSBSharedAccessKey}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">toBizTalkCustomBrokeredPropertyNamespace</Data></Cell>
+    <Cell><Data ss:Type="String">https://AzureClaimCheck.AzureClaimCheckSBProperties</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{toBizTalkCustomBrokeredPropertyNamespace}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">toBizTalkStorageAccountName</Data></Cell>
+    <Cell><Data ss:Type="String">biztalktoazurepoc</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{toBizTalkStorageAccountName}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">toBizTalkStorageAccountKey</Data></Cell>
+    <Cell><Data ss:Type="String">IAWRLfNXOG1GzRYc2VubltEAM2a80Tt1uqqVJCW2JG5Solx+KqXF0BPrwsphKzU4Kfe3fa8k4HwNebIJNeMdZw==</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{toBizTalkStorageAccountKey}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">toBizTalkKeyVaultClientId</Data></Cell>
+    <Cell><Data ss:Type="String">fb72770b-6029-4e81-a8c4-7b01f8525ecd</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{toBizTalkKeyVaultClientId}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">toBizTalkKeyVaultClientSecret</Data></Cell>
+    <Cell><Data ss:Type="String">6bSOcJ5zzf6fREvc0jt6T5kpEjaFqQdssLu0OwhqBp8=</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{toBizTalkKeyVaultClientSecret}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">toBizTalkKeyVaultSecretSufix</Data></Cell>
+    <Cell><Data ss:Type="String">StorageKey</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{toBizTalkKeyVaultSecretSufix}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkServiceBusNamespace</Data></Cell>
+    <Cell><Data ss:Type="String">BizTalkToAzurePOC.servicebus.windows.net</Data></Cell>
+    <Cell ss:Index="6"><Data ss:Type="String">#{fromBizTalkServiceBusNamespace}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkSBQueueName</Data></Cell>
+    <Cell><Data ss:Type="String">fromBizTalk</Data></Cell>
+    <Cell ss:Index="6"><Data ss:Type="String">#{fromBizTalkSBQueueName}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkSBSharedAccessKeyName</Data></Cell>
+    <Cell><Data ss:Type="String">RootManageSharedAccessKey</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkSBSharedAccessKeyName}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkSBSharedAccessKey</Data></Cell>
+    <Cell><Data ss:Type="String">xFZpNFtLXAnFMw/Hno9wL55y6BT1T4bMXkhy8t/gXKk=</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkSBSharedAccessKey}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkCustomBrokeredPropertyNamespace</Data></Cell>
+    <Cell><Data ss:Type="String">https://AzureClaimCheck.AzureClaimCheckSBProperties</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkCustomBrokeredPropertyNamespace}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkStorageAccountName</Data></Cell>
+    <Cell><Data ss:Type="String">biztalktoazurepoc</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkStorageAccountName}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkStorageAccountKey</Data></Cell>
+    <Cell><Data ss:Type="String">IAWRLfNXOG1GzRYc2VubltEAM2a80Tt1uqqVJCW2JG5Solx+KqXF0BPrwsphKzU4Kfe3fa8k4HwNebIJNeMdZw==</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkStorageAccountKey}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkKeyVaultClientId</Data></Cell>
+    <Cell><Data ss:Type="String">fb72770b-6029-4e81-a8c4-7b01f8525ecd</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkKeyVaultClientId}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkKeyVaultClientSecret</Data></Cell>
+    <Cell><Data ss:Type="String">6bSOcJ5zzf6fREvc0jt6T5kpEjaFqQdssLu0OwhqBp8=</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkKeyVaultClientSecret}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkKeyVaultSecretSufix</Data></Cell>
+    <Cell><Data ss:Type="String">StorageKey</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkKeyVaultSecretSufix}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkStorageOutboundContainer</Data></Cell>
+    <Cell><Data ss:Type="String">frombiztalk</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkStorageOutboundContainer}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">fromBizTalkStorageOutboundFileName</Data></Cell>
+    <Cell><Data ss:Type="String">%MessageID%_sampleout.xml</Data></Cell>
+    <Cell ss:Index="6" ss:StyleID="s72"><Data ss:Type="String">#{fromBizTalkStorageOutboundFileName}</Data></Cell>
    </Row>
   </Table>
   <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
@@ -160,6 +276,7 @@
    </Print>
    <Zoom>90</Zoom>
    <Selected/>
+   <LeftColumnVisible>1</LeftColumnVisible>
    <FreezePanes/>
    <FrozenNoSplit/>
    <SplitHorizontal>6</SplitHorizontal>
@@ -171,8 +288,8 @@
     </Pane>
     <Pane>
      <Number>2</Number>
-     <ActiveRow>19</ActiveRow>
-     <ActiveCol>1</ActiveCol>
+     <ActiveRow>25</ActiveRow>
+     <ActiveCol>5</ActiveCol>
     </Pane>
    </Panes>
    <ProtectObjects>False</ProtectObjects>
