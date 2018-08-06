@@ -124,6 +124,9 @@
     <Schemas Include="AzureClaimCheck.dll">
       <LocationPath>..\AzureClaimCheck\bin\$(Configuration)</LocationPath>
     </Schemas>
+    <Schemas Include="AzureClaimCheckBizTalkSampleArtifacts.dll">
+      <LocationPath>..\AzureClaimCheckBizTalkSampleArtifacts\bin\$(Configuration)</LocationPath>
+    </Schemas>
   </ItemGroup>
   <!-- !!! TODO !!! -->
   <Import Project="$(DeploymentFrameworkTargetsPath)BizTalkDeploymentFramework.targets" />
