@@ -53,6 +53,7 @@
     <!-- BizTalk App Version Upgrade -->
     <ProductName>AzureClaimCheck for BizTalk $(ProductVersion)</ProductName>
     <Manufacturer>Deployment Framework User</Manufacturer>
+    <PackageDescription>AzureClaimCheck for BizTalk $(ProductVersion)</PackageDescription>
     <BizTalkAppDescription>Version: $(ProductVersion) - Deployed: $([System.DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss"))</BizTalkAppDescription>
     <DeveloperPreProcessSettings Condition="'$(IsInVSTSBuild)' == 'True'">$(MSBuildProjectDirectory)\EnvironmentSettings\Exported_BuildSettings.xml</DeveloperPreProcessSettings>
     <!-- NEVER change the ProductUpgradeCode. -->
@@ -101,6 +102,9 @@
     <Components Include="Microsoft.Azure.KeyVault.WebKey.dll">
       <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
     </Components>
+    <!--<Components Include="System.Runtime.dll">
+      <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
+    </Components>-->
     <Components Include="Microsoft.Rest.ClientRuntime.dll">
       <LocationPath>..\AzureClaimCheckPipelineComponent\bin\$(Configuration)</LocationPath>
     </Components>
@@ -119,6 +123,9 @@
   <ItemGroup>
     <Schemas Include="AzureClaimCheck.dll">
       <LocationPath>..\AzureClaimCheck\bin\$(Configuration)</LocationPath>
+    </Schemas>
+    <Schemas Include="AzureClaimCheckBizTalkSampleArtifacts.dll">
+      <LocationPath>..\AzureClaimCheckBizTalkSampleArtifacts\bin\$(Configuration)</LocationPath>
     </Schemas>
   </ItemGroup>
   <!-- !!! TODO !!! -->

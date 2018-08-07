@@ -152,13 +152,6 @@
       <SubType>Task</SubType>
     </Pipeline>
   </ItemGroup>
-  <ItemGroup>
-    <Pipeline Include="EventGridTest.btp">
-      <TypeName>EventGridTest</TypeName>
-      <Namespace>AzureClaimCheck</Namespace>
-      <SubType>Task</SubType>
-    </Pipeline>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\BizTalk\BizTalkC.targets" />
 </Project>

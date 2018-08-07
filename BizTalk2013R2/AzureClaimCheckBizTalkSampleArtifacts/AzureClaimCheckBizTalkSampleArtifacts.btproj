@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1DDE08AF-92CB-4951-AB63-E7F5EEA5DDEC}</ProjectGuid>
+    <ProjectTypeGuids>{EF7E3281-CD33-11D4-8326-00C04FA0CE8D};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>library</OutputType>
+    <GenericProcessing>true</GenericProcessing>
+    <RootNamespace>AzureClaimCheckBizTalkSampleArtifacts</RootNamespace>
+    <AssemblyName>AzureClaimCheckBizTalkSampleArtifacts</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <BpelCompliance>True</BpelCompliance>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>AzureClaimCheckBizTalkSampleArtifacts.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="System.Configuration">
+      <Name>System.Configuration</Name>
+    </Reference>
+    <Reference Include="Microsoft.BizTalk.Pipeline">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.BizTalk.DefaultPipelines">
+      <Name>Microsoft.BizTalk.DefaultPipelines</Name>
+    </Reference>
+    <Reference Include="Microsoft.BizTalk.GlobalPropertySchemas">
+      <Name>Microsoft.BizTalk.GlobalPropertySchemas</Name>
+    </Reference>
+    <Reference Include="Microsoft.BizTalk.TestTools">
+      <Name>Microsoft.BizTalk.TestTools</Name>
+    </Reference>
+    <Reference Include="Microsoft.XLANGs.BaseTypes">
+      <Name>Microsoft.XLANGs.BaseTypes</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AzureClaimCheckBizTalkSampleArtifacts.snk" />
+    <Schema Include="Client1Message1.xsd">
+      <TypeName>Client1Message1</TypeName>
+      <Namespace>AzureClaimCheckBizTalkSampleArtifacts</Namespace>
+      <SubType>Task</SubType>
+    </Schema>
+    <Schema Include="Client1Message2.xsd">
+      <TypeName>Client1Message2</TypeName>
+      <Namespace>AzureClaimCheckBizTalkSampleArtifacts</Namespace>
+      <SubType>Task</SubType>
+    </Schema>
+    <Schema Include="Client1Message3.xsd">
+      <TypeName>Client1Message3</TypeName>
+      <Namespace>AzureClaimCheckBizTalkSampleArtifacts</Namespace>
+      <SubType>Task</SubType>
+    </Schema>
+    <Schema Include="InternalMessage1.xsd">
+      <TypeName>InternalMessage1</TypeName>
+      <Namespace>AzureClaimCheckBizTalkSampleArtifacts</Namespace>
+      <SubType>Task</SubType>
+    </Schema>
+    <Schema Include="InternalMessage2.xsd">
+      <TypeName>InternalMessage2</TypeName>
+      <Namespace>AzureClaimCheckBizTalkSampleArtifacts</Namespace>
+      <SubType>Task</SubType>
+    </Schema>
+    <Schema Include="InternalMessage3.xsd">
+      <TypeName>InternalMessage3</TypeName>
+      <Namespace>AzureClaimCheckBizTalkSampleArtifacts</Namespace>
+      <SubType>Task</SubType>
+    </Schema>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Client1Message1.xml" />
+    <Map Include="Client1Message1_To_InternalMessage1.btm">
+      <TypeName>Client1Message1_To_InternalMessage1</TypeName>
+      <Namespace>AzureClaimCheckBizTalkSampleArtifacts</Namespace>
+      <SubType>Task</SubType>
+    </Map>
+    <Content Include="Client1Message2.xml" />
+    <Map Include="Client1Message2_To_InternalMessage2.btm">
+      <TypeName>Client1Message2_To_InternalMessage2</TypeName>
+      <Namespace>AzureClaimCheckBizTalkSampleArtifacts</Namespace>
+      <SubType>Task</SubType>
+    </Map>
+    <Content Include="Client1Message3.xml" />
+    <Content Include="InternalMessage1.xml" />
+    <Content Include="InternalMessage2.xml" />
+    <Content Include="InternalMessage3.xml" />
+    <Map Include="InternalMessage3_To_Client1Message3.btm">
+      <TypeName>InternalMessage3_To_Client1Message3</TypeName>
+      <Namespace>AzureClaimCheckBizTalkSampleArtifacts</Namespace>
+      <SubType>Task</SubType>
+    </Map>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\BizTalk\BizTalkC.targets" />
+</Project>
