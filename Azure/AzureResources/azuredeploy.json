@@ -4,31 +4,35 @@
   "parameters": {
     "Location": {
       "defaultValue": "australiasoutheast",
-      "type": "String"
+      "type": "string"
     },
     "BaseName": {
       "defaultValue": "AzureClaimCheckDemo",
-      "type": "String"
+      "type": "string"
     },
     "Client1Name": {
       "defaultValue": "Client1",
-      "type": "String"
+      "type": "string"
     },
     "Message1Name": {
       "defaultValue": "Message1",
-      "type": "String"
+      "type": "string"
     },
     "Message2Name": {
       "defaultValue": "Message2",
-      "type": "String"
+      "type": "string"
+    },
+    "Message3Name": {
+      "defaultValue": "Message3",
+      "type": "string"
     },
     "ServicePrincipalObjectId": {
       "defaultValue": "c29da76f-0e5c-41a9-8ec7-84dbd6b28033",
-      "type": "String"
+      "type": "string"
     },
     "UserObjectId": {
       "defaultValue": "5eb0bb66-ca79-4e8f-bb17-ae8d1c579644",
-      "type": "String"
+      "type": "string"
     }
   },
   "variables": {},
@@ -382,6 +386,28 @@
       ]
     },
     {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', parameters('Client1Name'), parameters('Message3Name'))]",
+      "apiVersion": "2017-04-01",
+      "location": "[parameters('Location')]",
+      "scale": null,
+      "properties": {
+        "lockDuration": "PT1M",
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+        "deadLetteringOnMessageExpiration": false,
+        "deadLetteringOnFilterEvaluationExceptions": true,
+        "maxDeliveryCount": 10,
+        "status": "Active",
+        "enableBatchedOperations": true,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]"
+      ]
+    },
+    {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
       "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', parameters('Client1Name'), '/', parameters('Client1Name'))]",
       "apiVersion": "2017-04-01",
@@ -432,6 +458,23 @@
         "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
         "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]",
         "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('BaseName'), 'fromBiztalk', concat(parameters('Client1Name'), parameters('Message2Name')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
+      "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', concat(parameters('Client1Name'), parameters('Message2Name')), '/', concat(parameters('Client1Name'), parameters('Message3Name')))]",
+      "apiVersion": "2017-04-01",
+      "properties": {
+        "action": {},
+        "filterType": "SqlFilter",
+        "sqlFilter": {
+          "sqlExpression": "[concat('ClientId = ''', parameters('Client1Name'), ''' and MessageTypeId = ''', parameters('Message3Name'), '''')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('BaseName'), 'fromBiztalk', concat(parameters('Client1Name'), parameters('Message3Name')))]"
       ]
     }
   ],
