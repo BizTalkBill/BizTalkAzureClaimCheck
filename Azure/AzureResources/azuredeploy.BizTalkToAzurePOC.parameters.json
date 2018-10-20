@@ -2,6 +2,8 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "AzureClaimCheck.Environment.Prefix": { "value": "dev" },
+    "AzureClaimCheck.Location": { "value": "australiasoutheast" },
     "BaseName": { "value": "BizTalkToAzurePOC" },
     "ServicePrincipalObjectId": { "value": "c29da76f-0e5c-41a9-8ec7-84dbd6b28033" },
     "UserObjectId": { "value": "10e2d96f-ffb1-4656-a1cd-2afafdfed946" }

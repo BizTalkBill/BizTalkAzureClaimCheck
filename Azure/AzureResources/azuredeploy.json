@@ -2,30 +2,69 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "Location": {
+    "AzureClaimCheck.Environment.Prefix": {
+      "defaultValue": "dev",
+      "type": "String",
+      "allowedValues": [
+        "dev",
+        "stg",
+        "prd"
+      ]
+    },
+    "AzureClaimCheck.Location": {
+      "type": "string",
       "defaultValue": "australiasoutheast",
-      "type": "string"
+      "allowedValues": [
+        "[resourceGroup().location]",
+        "eastasia",
+        "southeastasia",
+        "centralus",
+        "eastus",
+        "eastus2",
+        "westus",
+        "northcentralus",
+        "southcentralus",
+        "northeurope",
+        "westeurope",
+        "japanwest",
+        "japaneast",
+        "brazilsouth",
+        "australiaeast",
+        "australiasoutheast",
+        "southindia",
+        "centralindia",
+        "westindia",
+        "canadacentral",
+        "canadaeast",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westus2"
+      ],
+      "metadata": {
+        "description": "Location of the deployment."
+      }
     },
     "BaseName": {
       "defaultValue": "AzureClaimCheckDemo",
       "type": "string"
     },
-    "Client1Name": {
-      "defaultValue": "Client1",
-      "type": "string"
-    },
-    "Message1Name": {
-      "defaultValue": "Message1",
-      "type": "string"
-    },
-    "Message2Name": {
-      "defaultValue": "Message2",
-      "type": "string"
-    },
-    "Message3Name": {
-      "defaultValue": "Message3",
-      "type": "string"
-    },
+    //"Client1Name": {
+    //  "defaultValue": "Client1",
+    //  "type": "string"
+    //},
+    //"Message1Name": {
+    //  "defaultValue": "Message1",
+    //  "type": "string"
+    //},
+    //"Message2Name": {
+    //  "defaultValue": "Message2",
+    //  "type": "string"
+    //},
+    //"Message3Name": {
+    //  "defaultValue": "Message3",
+    //  "type": "string"
+    //},
     "ServicePrincipalObjectId": {
       "defaultValue": "c29da76f-0e5c-41a9-8ec7-84dbd6b28033",
       "type": "string"
@@ -35,13 +74,22 @@
       "type": "string"
     }
   },
-  "variables": {},
+  "variables": {
+    "KeyVaultName": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')), parameters('BaseName'))]",
+    "IntegrationAccountName": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')), parameters('BaseName'))]",
+    "ServiceBusNamespace": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')), parameters('BaseName'))]",
+    "StorageAccountName": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')), toLower(parameters('BaseName')))]",
+    "Client1Name": "Client1",
+    "Message1Name": "Message1",
+    "Message2Name": "Message2",
+    "Message3Name": "Message3"
+  },
   "resources": [
     {
       "type": "Microsoft.KeyVault/vaults",
-      "name": "[parameters('BaseName')]",
+      "name": "[variables('KeyVaultName')]",
       "apiVersion": "2016-10-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "tags": {},
       "scale": null,
       "properties": {
@@ -117,9 +165,9 @@
       "sku": {
         "name": "Free"
       },
-      "name": "[parameters('BaseName')]",
+      "name": "[variables('IntegrationAccountName')]",
       "apiVersion": "2016-06-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {},
       "dependsOn": []
@@ -130,17 +178,17 @@
         "name": "Standard",
         "tier": "Standard"
       },
-      "name": "[parameters('BaseName')]",
+      "name": "[variables('ServiceBusNamespace')]",
       "apiVersion": "2017-04-01",
-      "location": "Australia Southeast",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "tags": {},
       "scale": null,
       "properties": {
         "provisioningState": "Succeeded",
-        "metricId": "[concat('6395155a-f1c7-4eee-89ec-c60424189924:biztalktoazurepoc', parameters('BaseName'))]",
+        "metricId": "[concat(subscription().subscriptionId,':',resourceGroup().Name, variables('ServiceBusNamespace'))]",
         "createdAt": "2018-06-20T04:31:30.003Z",
         "updatedAt": "2018-07-03T06:19:55.217Z",
-        "serviceBusEndpoint": "[concat('https://', parameters('BaseName'),'.servicebus.windows.net:443/')]",
+        "serviceBusEndpoint": "[concat('https://', variables('ServiceBusNamespace'),'.servicebus.windows.net:443/')]",
         "status": "Active"
       },
       "dependsOn": []
@@ -152,9 +200,9 @@
         "tier": "Standard"
       },
       "kind": "StorageV2",
-      "name": "[toLower(parameters('BaseName'))]",
+      "name": "[variables('StorageAccountName')]",
       "apiVersion": "2018-03-01-preview",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "tags": {},
       "scale": null,
       "properties": {
@@ -183,83 +231,83 @@
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2018-03-01-preview",
-      "name": "[concat(toLower(parameters('BaseName')), '/default/archive')]",
+      "name": "[concat(variables('StorageAccountName'), '/default/archive')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('BaseName')))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
       ]
     },
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2018-03-01-preview",
-      "name": "[concat(toLower(parameters('BaseName')), '/default/frombiztalk')]",
+      "name": "[concat(variables('StorageAccountName'), '/default/frombiztalk')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('BaseName')))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
       ]
     },
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2018-03-01-preview",
-      "name": "[concat(toLower(parameters('BaseName')), '/default/tobiztalk')]",
+      "name": "[concat(variables('StorageAccountName'), '/default/tobiztalk')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('BaseName')))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
       ]
     },
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
-      "name": "[concat(parameters('BaseName'), '/', concat(parameters('Client1Name'), parameters('Message1Name'), 'StorageKey'))]",
+      "name": "[concat(variables('KeyVaultName'), '/', concat(variables('Client1Name'), variables('Message1Name'), 'StorageKey'))]",
       "apiVersion": "2016-10-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "attributes": {
           "enabled": true
         },
-        "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('BaseName'))), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+        "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', parameters('BaseName'))]",
-        "[resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('BaseName')))]"
+        "[resourceId('Microsoft.KeyVault/vaults', variables('KeyVaultName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
       ]
     },
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
-      "name": "[concat(parameters('BaseName'), '/', concat(parameters('Client1Name'), parameters('Message2Name'), 'StorageKey'))]",
+      "name": "[concat(variables('KeyVaultName'), '/', concat(variables('Client1Name'), variables('Message2Name'), 'StorageKey'))]",
       "apiVersion": "2016-10-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "attributes": {
           "enabled": true
         },
-        "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('BaseName'))), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+        "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', parameters('BaseName'))]",
-        "[resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('BaseName')))]"
+        "[resourceId('Microsoft.KeyVault/vaults', variables('KeyVaultName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
       ]
     },
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
-      "name": "[concat(parameters('BaseName'), '/', concat(parameters('Client1Name'), 'StorageKey'))]",
+      "name": "[concat(variables('KeyVaultName'), '/', concat(variables('Client1Name'), 'StorageKey'))]",
       "apiVersion": "2016-10-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "attributes": {
           "enabled": true
         },
-        "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('BaseName'))), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+        "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', parameters('BaseName'))]",
-        "[resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('BaseName')))]"
+        "[resourceId('Microsoft.KeyVault/vaults', variables('KeyVaultName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
-      "name": "[concat(parameters('BaseName'), '/RootManageSharedAccessKey')]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/RootManageSharedAccessKey')]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "rights": [
@@ -269,14 +317,14 @@
         ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/queues",
-      "name": "[concat(parameters('BaseName'), '/toBiztalk')]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/toBiztalk')]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "lockDuration": "PT30S",
@@ -294,14 +342,14 @@
         "enableExpress": false
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics",
-      "name": "[concat(parameters('BaseName'), '/fromBiztalk')]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/fromBiztalk')]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "defaultMessageTimeToLive": "P14D",
@@ -316,12 +364,12 @@
         "enableExpress": false
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
-      "name": "[concat(parameters('BaseName'), '/fromBiztalk/', parameters('Client1Name'))]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/fromBiztalk/', variables('Client1Name'))]",
       "apiVersion": "2017-04-01",
       "location": "Australia Southeast",
       "scale": null,
@@ -337,15 +385,15 @@
         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', variables('ServiceBusNamespace'), 'fromBiztalk')]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
-      "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', parameters('Client1Name'), parameters('Message1Name'))]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), variables('Message1Name'))]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "lockDuration": "PT1M",
@@ -359,15 +407,15 @@
         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', variables('ServiceBusNamespace'), 'fromBiztalk')]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
-      "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', parameters('Client1Name'), parameters('Message2Name'))]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), variables('Message2Name'))]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "lockDuration": "PT1M",
@@ -381,15 +429,15 @@
         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', variables('ServiceBusNamespace'), 'fromBiztalk')]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
-      "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', parameters('Client1Name'), parameters('Message3Name'))]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), variables('Message3Name'))]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "lockDuration": "PT1M",
@@ -403,78 +451,78 @@
         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', variables('ServiceBusNamespace'), 'fromBiztalk')]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
-      "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', parameters('Client1Name'), '/', parameters('Client1Name'))]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), '/', variables('Client1Name'))]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('Location')]",
+      "location": "[parameters('AzureClaimCheck.Location')]",
       "scale": null,
       "properties": {
         "action": {},
         "filterType": "SqlFilter",
         "sqlFilter": {
-          "sqlExpression": "[concat('ClientId = ''', parameters('Client1Name'), '''')]"
+          "sqlExpression": "[concat('ClientId = ''', variables('Client1Name'), '''')]"
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('BaseName'), 'fromBiztalk', parameters('Client1Name'))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', variables('ServiceBusNamespace'), 'fromBiztalk')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', variables('ServiceBusNamespace'), 'fromBiztalk', variables('Client1Name'))]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
-      "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', concat(parameters('Client1Name'), parameters('Message1Name')), '/', concat(parameters('Client1Name'), parameters('Message1Name')))]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), variables('Message1Name'), '/', variables('Client1Name'), variables('Message1Name'))]",
       "apiVersion": "2017-04-01",
       "properties": {
         "action": {},
         "filterType": "SqlFilter",
         "sqlFilter": {
-          "sqlExpression": "[concat('ClientId = ''', parameters('Client1Name'), ''' and MessageTypeId = ''', parameters('Message1Name'), '''')]"
+          "sqlExpression": "[concat('ClientId = ''', variables('Client1Name'), ''' and MessageTypeId = ''', variables('Message1Name'), '''')]"
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('BaseName'), 'fromBiztalk', concat(parameters('Client1Name'), parameters('Message1Name')))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', variables('ServiceBusNamespace'), 'fromBiztalk')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', variables('ServiceBusNamespace'), 'fromBiztalk', concat(variables('Client1Name'), variables('Message1Name')))]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
-      "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', concat(parameters('Client1Name'), parameters('Message2Name')), '/', concat(parameters('Client1Name'), parameters('Message2Name')))]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), variables('Message2Name'), '/', variables('Client1Name'), variables('Message2Name'))]",
       "apiVersion": "2017-04-01",
       "properties": {
         "action": {},
         "filterType": "SqlFilter",
         "sqlFilter": {
-          "sqlExpression": "[concat('ClientId = ''', parameters('Client1Name'), ''' and MessageTypeId = ''', parameters('Message2Name'), '''')]"
+          "sqlExpression": "[concat('ClientId = ''', variables('Client1Name'), ''' and MessageTypeId = ''', variables('Message2Name'), '''')]"
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('BaseName'), 'fromBiztalk', concat(parameters('Client1Name'), parameters('Message2Name')))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', variables('ServiceBusNamespace'), 'fromBiztalk')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', variables('ServiceBusNamespace'), 'fromBiztalk', concat(variables('Client1Name'), variables('Message2Name')))]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
-      "name": "[concat(parameters('BaseName'), '/fromBiztalk', '/', concat(parameters('Client1Name'), parameters('Message2Name')), '/', concat(parameters('Client1Name'), parameters('Message3Name')))]",
+      "name": "[concat(variables('ServiceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), variables('Message3Name'), '/', variables('Client1Name'), variables('Message3Name'))]",
       "apiVersion": "2017-04-01",
       "properties": {
         "action": {},
         "filterType": "SqlFilter",
         "sqlFilter": {
-          "sqlExpression": "[concat('ClientId = ''', parameters('Client1Name'), ''' and MessageTypeId = ''', parameters('Message3Name'), '''')]"
+          "sqlExpression": "[concat('ClientId = ''', variables('Client1Name'), ''' and MessageTypeId = ''', variables('Message3Name'), '''')]"
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('BaseName'))]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('BaseName'), 'fromBiztalk')]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', parameters('BaseName'), 'fromBiztalk', concat(parameters('Client1Name'), parameters('Message3Name')))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusNamespace'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', variables('ServiceBusNamespace'), 'fromBiztalk')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions', variables('ServiceBusNamespace'), 'fromBiztalk', concat(variables('Client1Name'), variables('Message3Name')))]"
       ]
     }
   ],
