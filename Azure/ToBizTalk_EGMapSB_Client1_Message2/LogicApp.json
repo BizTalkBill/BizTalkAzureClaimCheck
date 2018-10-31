@@ -45,6 +45,10 @@
         "description": "Location of the deployment."
       }
     },
+    "AzureClaimCheck.BaseName": {
+      "defaultValue": "AzureClaimCheckDemo",
+      "type": "string"
+    },
     "AzureClaimCheck.ServicePrincipal.ClientId": {
       "type": "string",
       "defaultValue": "fb72770b-6029-4e81-a8c4-7b01f8525ecd"
@@ -60,16 +64,17 @@
     "AzureClaimCheck.ConsumptionHost": {
       "type": "string",
       "defaultValue": "https://consumption.azure.com:443"
-    },
+    }
   },
   "variables": {
-    "BaseName": "AzureClaimCheckDemo",
     "Client1Name": "Client1",
     "Message1Name": "Message1",
     "Message2Name": "Message2",
     "logicAppName": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')), 'ToBizTalk_EGMapSB_', variables('Client1Name'), '_', variables('Message2Name'))]",
-    "EventGrid_Topic_Name": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')), 'AzureDataGrabbers')]",
-    "StorageAccount_Name": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')),toLower(variables('BaseName'))]"
+    "integrationAccountName": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')), parameters('AzureClaimCheck.BaseName'))]",
+    //"eventGridTopicName": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')), 'AzureDataGrabbers')]",
+    "storageAccountName": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')),toLower(parameters('AzureClaimCheck.BaseName')))]",
+    "serviceBusNamespace": "[concat(toLower(parameters('AzureClaimCheck.Environment.Prefix')), parameters('AzureClaimCheck.BaseName'))]"
   },
   "resources": [
     {
@@ -82,13 +87,14 @@
         "api": {
           "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'), '/managedApis/azureblob')]"
         },
-        "displayName": "[variables('StorageAccount_Name')]",
+        "displayName": "[variables('storageAccountName')]",
         "parameterValues": {
-          "accountName": "[variables('StorageAccount_Name')]",
-          "accessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccount_Name')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
-        },
-        "dependsOn": []
+          "accountName": "[variables('storageAccountName')]",
+          "accessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+        }
       },
+      "dependsOn": []
+    },
     {
       "type": "MICROSOFT.WEB/CONNECTIONS",
       "apiVersion": "2016-06-01",
@@ -110,291 +116,293 @@
     {
       "type": "MICROSOFT.WEB/CONNECTIONS",
       "apiVersion": "2016-06-01",
-      "name": "servicebus_1",
+      "name": "servicebus",
       "location": "[parameters('AzureClaimCheck.Location')]",
-      "scale": null,
       "properties": {
-        "displayName": "[variables('BaseName')]",
+        "displayName": "[variables('serviceBusNamespace')]",
         "customParameterValues": {},
         "api": {
-          "id": "concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'),'/managedApis/servicebus')"
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'),'/managedApis/servicebus')]"
+        },
+        "parameterValues": {
+          "connectionString": "[listKeys(resourceId('Microsoft.Servicebus/namespaces/authorizationRules', variables('serviceBusNamespace'), 'RootManageSharedAccessKey'), '2014-09-01').primaryConnectionString]"
         }
       },
       "dependsOn": []
     },
-      {
-        "type": "Microsoft.Logic/workflows",
-        "name": "[variables('logicAppName')]",
-        "apiVersion": "2017-07-01",
-        "location": "[parameters('AzureClaimCheck.Location')]",
-        "tags": {},
-        "scale": null,
-        "properties": {
-          "definition": {
-            "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-            "contentVersion": "1.0.0.0",
-            "parameters": {
-              "$connections": {
-                "defaultValue": {},
-                "type": "Object"
-              }
-            },
-            "triggers": {
-              "When_a_resource_event_occurs": {
-                "splitOn": "@triggerBody()",
-                "type": "ApiConnectionWebhook",
-                "inputs": {
-                  "body": {
-                    "properties": {
-                      "destination": {
-                        "endpointType": "webhook",
-                        "properties": {
-                          "endpointUrl": "@{listCallbackUrl()}"
-                        }
-                      },
-                      "filter": {
-                        "includedEventTypes": [
-                          "Microsoft.Storage.BlobCreated"
-                        ],
-                        "subjectBeginsWith": "/blobServices/default/containers/tobiztalk/blobs/Client1/Message2/",
-                        "subjectEndsWith": ".xml"
-                      },
-                      "topic": "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccount_Name'))]"
-                    }
-                  },
-                  "host": {
-                    "connection": {
-                      "name": "@parameters('$connections')['azureeventgrid']['connectionId']"
-                    }
-                  },
-                  "path": "/subscriptions/@{encodeURIComponent(subscription().Id)}/providers/@{encodeURIComponent('Microsoft.Storage.StorageAccounts')}/resource/eventSubscriptions",
-                  "queries": {
-                    "x-ms-api-version": "2017-09-15-preview"
+    {
+      "type": "Microsoft.Logic/workflows",
+      "name": "[variables('logicAppName')]",
+      "apiVersion": "2017-07-01",
+      "location": "[parameters('AzureClaimCheck.Location')]",
+      "tags": {
+        "displayName": "LogicApp"
+      },
+      "scale": null,
+      "properties": {
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "actions": {
+            "Apply_Map": {
+              "runAfter": {
+                "Validate_Input": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Xslt",
+              "inputs": {
+                "content": "@{body('Get_blob_content')}",
+                "integrationAccount": {
+                  "map": {
+                    "name": "Inbound_To_Outbound"
                   }
                 }
               }
             },
-            "actions": {
-              "Apply_Map": {
-                "runAfter": {
-                  "Validate_Input": [
-                    "Succeeded"
-                  ]
-                },
-                "type": "Xslt",
-                "inputs": {
-                  "content": "@{body('Get_blob_content')}",
-                  "integrationAccount": {
-                    "map": {
-                      "name": "Inbound_To_Outbound"
-                    }
-                  }
-                }
-              },
-              "Archive_Inbound_Message": {
-                "runAfter": {},
-                "type": "ApiConnection",
-                "inputs": {
-                  "host": {
-                    "connection": {
-                      "name": "@parameters('$connections')['azureblob']['connectionId']"
-                    }
-                  },
-                  "method": "post",
-                  "path": "/datasets/default/copyFile",
-                  "queries": {
-                    "destination": "@{replace(uriPath(trigger().outputs.body.data.url),'/tobiztalk/Client1/Message2/',concat('/archive/in/Client1/Message2/',triggerBody()?['id'],'_'))}",
-                    "overwrite": true,
-                    "queryParametersSingleEncoded": true,
-                    "source": "@{uriPath(trigger().outputs.body.data.url)}"
-                  }
-                }
-              },
-              "Delete_blob": {
-                "runAfter": {
-                  "Send_message": [
-                    "Succeeded"
-                  ]
-                },
-                "metadata": {
-                  "JTJmcHJvY2VzczElMmZpbiUyZnNhbXBsZUluYm91bmQueG1s": "/tobiztalk/Client1/Message2/sampleInbound.xml"
-                },
-                "type": "ApiConnection",
-                "inputs": {
-                  "host": {
-                    "connection": {
-                      "name": "@parameters('$connections')['azureblob']['connectionId']"
-                    }
-                  },
-                  "method": "delete",
-                  "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(uriPath(trigger().outputs.body.data.url)))}"
-                }
-              },
-              "Get_blob_content": {
-                "runAfter": {
-                  "Archive_Inbound_Message": [
-                    "Succeeded"
-                  ]
-                },
-                "metadata": {
-                  "JTJmcHJvY2VzczElMmZpbiUyZnNhbXBsZUluYm91bmQueG1s": "/tobiztalk/Client1/Message2/sampleInbound.xml"
-                },
-                "type": "ApiConnection",
-                "inputs": {
-                  "host": {
-                    "connection": {
-                      "name": "@parameters('$connections')['azureblob']['connectionId']"
-                    }
-                  },
-                  "method": "get",
-                  "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(uriPath(trigger().outputs.body.data.url)))}/content",
-                  "queries": {
-                    "inferContentType": true
-                  }
-                }
-              },
-              "Initialize_variable": {
-                "runAfter": {
-                  "Validate_Output": [
-                    "Succeeded"
-                  ]
-                },
-                "type": "InitializeVariable",
-                "inputs": {
-                  "variables": [
-                    {
-                      "name": "inboundFileName",
-                      "type": "String",
-                      "value": "@{concat(triggerBody()?['id'],'_',replace(uriPath(trigger().outputs.body.data.url),substring(uriPath(trigger().outputs.body.data.url),0,add(lastIndexOf(uriPath(trigger().outputs.body.data.url),'/'),1)),''))}"
-                    }
-                  ]
-                }
-              },
-              "Send_message": {
-                "runAfter": {
-                  "Write_Result_to_ToBizTalk_storage_location": [
-                    "Succeeded"
-                  ]
-                },
-                "type": "ApiConnection",
-                "inputs": {
-                  "body": {
-                    "ContentData": "@{base64(concat('/tobiztalk/inboundsb/',variables('inboundFileName')))}",
-                    "ContentType": "application/text",
-                    "Properties": {
-                      "ClientId": "Client1",
-                      "MessageTypeId": "Message2"
-                    }
-                  },
-                  "host": {
-                    "connection": {
-                      "name": "@parameters('$connections')['servicebus']['connectionId']"
-                    }
-                  },
-                  "method": "post",
-                  "path": "/@{encodeURIComponent(encodeURIComponent('tobiztalk'))}/messages",
-                  "queries": {
-                    "systemProperties": "None"
-                  }
-                }
-              },
-              "Validate_Input": {
-                "runAfter": {
-                  "Get_blob_content": [
-                    "Succeeded"
-                  ]
-                },
-                "type": "XmlValidation",
-                "inputs": {
-                  "content": "@{body('Get_blob_content')}",
-                  "integrationAccount": {
-                    "schema": {
-                      "name": "Inbound"
-                    }
-                  }
-                }
-              },
-              "Validate_Output": {
-                "runAfter": {
-                  "Apply_Map": [
-                    "Succeeded"
-                  ]
-                },
-                "type": "XmlValidation",
-                "inputs": {
-                  "content": "@{body('Apply_Map')}",
-                  "integrationAccount": {
-                    "schema": {
-                      "name": "Outbound"
-                    }
-                  }
-                }
-              },
-              "Write_Result_to_ToBizTalk_storage_location": {
-                "runAfter": {
-                  "Initialize_variable": [
-                    "Succeeded"
-                  ]
-                },
-                "type": "ApiConnection",
-                "inputs": {
-                  "body": "@body('Apply_Map')",
-                  "host": {
-                    "connection": {
-                      "name": "@parameters('$connections')['azureblob']['connectionId']"
-                    }
-                  },
-                  "method": "post",
-                  "path": "/datasets/default/files",
-                  "queries": {
-                    "folderPath": "/tobiztalk/inboundsb",
-                    "name": "@variables('inboundFileName')",
-                    "queryParametersSingleEncoded": true
+            "Archive_Inbound_Message": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['azureblob']['connectionId']"
                   }
                 },
-                "runtimeConfiguration": {
-                  "contentTransfer": {
-                    "transferMode": "Chunked"
-                  }
+                "method": "post",
+                "path": "/datasets/default/copyFile",
+                "queries": {
+                  "source": "@{uriPath(trigger().outputs.body.data.url)}",
+                  "destination": "@{replace(uriPath(trigger().outputs.body.data.url),'/tobiztalk/Client1/Message2/',concat('/archive/in/Client1/Message2/',triggerBody()?['id'],'_'))}",
+                  "overwrite": true,
+                  "queryParametersSingleEncoded": true
                 }
+              },
+              "runAfter": {}
+            },
+            "Delete_blob": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                  }
+                },
+                "method": "delete",
+                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(uriPath(trigger().outputs.body.data.url)))}"
+              },
+              "runAfter": {
+                "Send_message": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "JTJmcHJvY2VzczElMmZpbiUyZnNhbXBsZUluYm91bmQueG1s": "/tobiztalk/Client1/Message2/sampleInbound.xml"
               }
             },
-            "outputs": {}
-          },
-          "integrationAccount": {
-            "id": "[resourceId('Microsoft.Logic/integrationAccounts', [variables('BaseName')])]"
-          },
-          "parameters": {
-            "$connections": {
-              "value": {
-                "azureblob": {
-                  "connectionId": "[resourceId('Microsoft.Web/connections', 'azureblob')]",
-                  "connectionName": "azureblob",
-                  "id": "/subscriptions/6395155a-f1c7-4eee-89ec-c60424189924/providers/Microsoft.Web/locations/australiasoutheast/managedApis/azureblob"
+            "Get_blob_content": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                  }
                 },
-                "azureeventgrid": {
-                  "connectionId": "[resourceId('Microsoft.Web/connections', 'azureeventgrid')]",
-                  "connectionName": "azureeventgrid",
-                  "id": "/subscriptions/6395155a-f1c7-4eee-89ec-c60424189924/providers/Microsoft.Web/locations/australiasoutheast/managedApis/azureeventgrid"
+                "method": "get",
+                "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(uriPath(trigger().outputs.body.data.url)))}/content",
+                "queries": {
+                  "inferContentType": true
+                }
+              },
+              "runAfter": {
+                "Archive_Inbound_Message": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "JTJmcHJvY2VzczElMmZpbiUyZnNhbXBsZUluYm91bmQueG1s": "/tobiztalk/Client1/Message2/sampleInbound.xml"
+              }
+            },
+            "Initialize_variable": {
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "inboundFileName",
+                    "type": "String",
+                    "value": "@{concat(triggerBody()?['id'],'_',replace(uriPath(trigger().outputs.body.data.url),substring(uriPath(trigger().outputs.body.data.url),0,add(lastIndexOf(uriPath(trigger().outputs.body.data.url),'/'),1)),''))}"
+                  }
+                ]
+              },
+              "runAfter": {
+                "Validate_Output": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Send_message": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['servicebus']['connectionId']"
+                  }
                 },
-                "servicebus": {
-                  "connectionId": "[resourceId('Microsoft.Web/connections', 'servicebus_1')]",
-                  "connectionName": "servicebus-1",
-                  "id": "/subscriptions/6395155a-f1c7-4eee-89ec-c60424189924/providers/Microsoft.Web/locations/australiasoutheast/managedApis/servicebus"
+                "method": "post",
+                "body": {
+                  "ContentData": "@{base64(concat('/tobiztalk/inboundsb/',variables('inboundFileName')))}",
+                  "ContentType": "application/text",
+                  "Properties": {
+                    "ClientId": "Client1",
+                    "MessageTypeId": "Message2"
+                  }
+                },
+                "path": "/@{encodeURIComponent(encodeURIComponent('tobiztalk'))}/messages",
+                "queries": {
+                  "systemProperties": "None"
+                }
+              },
+              "runAfter": {
+                "Write_Result_to_ToBizTalk_storage_location": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Validate_Input": {
+              "type": "XmlValidation",
+              "inputs": {
+                "content": "@{body('Get_blob_content')}",
+                "integrationAccount": {
+                  "schema": {
+                    "name": "Inbound"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_blob_content": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Validate_Output": {
+              "type": "XmlValidation",
+              "inputs": {
+                "content": "@{body('Apply_Map')}",
+                "integrationAccount": {
+                  "schema": {
+                    "name": "Outbound"
+                  }
+                }
+              },
+              "runAfter": {
+                "Apply_Map": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Write_Result_to_ToBizTalk_storage_location": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "body": "@body('Apply_Map')",
+                "path": "/datasets/default/files",
+                "queries": {
+                  "folderPath": "/tobiztalk/inboundsb",
+                  "name": "@variables('inboundFileName')",
+                  "queryParametersSingleEncoded": true
+                }
+              },
+              "runAfter": {
+                "Initialize_variable": [
+                  "Succeeded"
+                ]
+              },
+              "runtimeConfiguration": {
+                "contentTransfer": {
+                  "transferMode": "Chunked"
                 }
               }
             }
           },
-          "state": "Enabled"
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "When_a_resource_event_occurs": {
+              "type": "ApiConnectionWebhook",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['azureeventgrid']['connectionId']"
+                  }
+                },
+                "body": {
+                  "properties": {
+                    "topic": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+                    "filter": {
+                      "includedEventTypes": [
+                        "Microsoft.Storage.BlobCreated"
+                      ],
+                      "subjectBeginsWith": "/blobServices/default/containers/tobiztalk/blobs/Client1/Message2/",
+                      "subjectEndsWith": ".xml"
+                    },
+                    "destination": {
+                      "endpointType": "webhook",
+                      "properties": {
+                        "endpointUrl": "@{listCallbackUrl()}"
+                      }
+                    }
+                  }
+                },
+                "path": "/subscriptions/@{encodeURIComponent(subscription().subscriptionId)}/providers/@{encodeURIComponent('Microsoft.Storage.StorageAccounts')}/resource/eventSubscriptions",
+                "queries": {
+                  "x-ms-api-version": "2017-09-15-preview"
+                }
+              },
+              "splitOn": "@triggerBody()"
+            }
+          },
+          "contentVersion": "1.0.0.0",
+          "outputs": {}
         },
-        "dependsOn": [
-          //"[resourceId('Microsoft.Logic/integrationAccounts', [variables('BaseName')])]",
-          //"[resourceId('Microsoft.Storage/storageAccounts', toLower([variables('BaseName')]))]",
-          "[resourceId('Microsoft.Web/connections', 'azureblob')]",
-          "[resourceId('Microsoft.Web/connections', 'azureeventgrid')]",
-          "[resourceId('Microsoft.Web/connections', 'servicebus_1')]"
-        ]
-      }
+        "integrationAccount": {
+          "id": "[resourceId('Microsoft.Logic/integrationAccounts', variables('integrationAccountName'))]"
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "azureblob": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'), '/managedApis/', 'azureblob')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', 'azureblob')]",
+                "connectionName": "azureblob"
+              },
+              "servicebus": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'), '/managedApis/', 'servicebus')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', 'servicebus')]",
+                "connectionName": "servicebus"
+              },
+              "azureeventgrid": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'), '/managedApis/', 'azureeventgrid')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', 'azureeventgrid')]",
+                "connectionName": "azureeventgrid"
+              }
+            }
+          }
+        },
+        "state": "Enabled"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', 'azureblob')]",
+        "[resourceId('Microsoft.Web/connections', 'servicebus')]",
+        "[resourceId('Microsoft.Web/connections', 'azureeventgrid')]"
+      ]
+    }
   ],
   "outputs": {}
 }

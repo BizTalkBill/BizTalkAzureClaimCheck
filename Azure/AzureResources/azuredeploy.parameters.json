@@ -4,6 +4,6 @@
   "parameters": {
     "AzureClaimCheck.Environment.Prefix": { "value": "dev" },
     "AzureClaimCheck.Location": { "value": "australiasoutheast" },
-    "BaseName": { "value": "AzureClaimCheck" }
+    "AzureClaimCheck.BaseName": { "value": "AzureClaimCheckDemo" }
   }
 }
