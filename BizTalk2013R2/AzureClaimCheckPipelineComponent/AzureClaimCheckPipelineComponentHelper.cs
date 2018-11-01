@@ -150,7 +150,7 @@ namespace BizTalkBill
             return false;
         }
 
-        public static async Task<string> GetKeyVaultSecret(string KeyVaultClientId, string KeyVaultClientSecret, string keyVaultSecret)
+        public static async Task<string> GetKeyVaultSecret(string KeyVaultURL,string KeyVaultClientId, string KeyVaultClientSecret, string keyVaultSecret)
         {
             KeyVaultClient keyClient = new KeyVaultClient(async (authority, resource, scope) =>
             {
@@ -159,7 +159,8 @@ namespace BizTalkBill
                 return (await authenticationContext.AcquireTokenAsync(resource, adCredential)).AccessToken;
             });
 
-            var secret = await keyClient.GetSecretAsync("https://biztalktoazurepoc.vault.azure.net/" + "secrets/" + keyVaultSecret);
+            //var secret = await keyClient.GetSecretAsync("https://biztalktoazurepoc.vault.azure.net/" + "secrets/" + keyVaultSecret);
+            var secret = await keyClient.GetSecretAsync(KeyVaultURL.EndsWith("/")?KeyVaultURL:KeyVaultURL+"/" + "secrets/" + keyVaultSecret);
 
             return secret.Value;
         }
