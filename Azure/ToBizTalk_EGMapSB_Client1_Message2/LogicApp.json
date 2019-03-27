@@ -7,6 +7,7 @@
       "type": "String",
       "allowedValues": [
         "dev",
+        "build",
         "test",
         "prod"
       ]

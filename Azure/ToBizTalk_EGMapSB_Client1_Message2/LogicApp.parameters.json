@@ -2,24 +2,10 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "AzureClaimCheck.Environment.Prefix": { "value": "dev" },
+    "AzureClaimCheck.Environment.Prefix": { "value": "build" },
     "AzureClaimCheck.BaseName": { "value": "AzureClaimCheckDemo" },
     "AzureClaimCheck.ServicePrincipal.Name": { "value": "AzureClaimCheckDemo" },
-    "AzureClaimCheck.ServicePrincipal.ClientId": {
-      "reference": {
-        "keyVault": {
-          "id": "/subscriptions/3e2bea16-63ed-4349-9b9c-fe2f91f8e3d4/resourceGroups/AzureClaimCheckDemo/providers/Microsoft.KeyVault/vaults/AzureClaimCheckDemo"
-        },
-        "secretName": "AzureClaimCheckDemo-ClientId"
-      }
-    },
-    "AzureClaimCheck.ServicePrincipal.ClientSecret": {
-      "reference": {
-        "keyVault": {
-          "id": "/subscriptions/3e2bea16-63ed-4349-9b9c-fe2f91f8e3d4/resourceGroups/AzureClaimCheckDemo/providers/Microsoft.KeyVault/vaults/AzureClaimCheckDemo"
-        },
-        "secretName": "AzureClaimCheckDemo-ClientSecret"
-      }
-    }
+    "AzureClaimCheck.ServicePrincipal.ClientId": { "value": "40fd386e-ca8f-4af0-811c-deb49e021e23" },
+    "AzureClaimCheck.ServicePrincipal.ClientSecret": { "value": "Qjf1u+s24o9us9GKpEyl/1UuDpG1lY96IKZPCq+JJz0=" }
   }
 }
