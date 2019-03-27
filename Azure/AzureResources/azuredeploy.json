@@ -7,64 +7,15 @@
       "type": "String",
       "allowedValues": [
         "dev",
-        "stg",
-        "prd"
+        "build",
+        "test",
+        "prod"
       ]
-    },
-    "AzureClaimCheck.Location": {
-      "type": "string",
-      "defaultValue": "australiasoutheast",
-      "allowedValues": [
-        "[resourceGroup().location]",
-        "eastasia",
-        "southeastasia",
-        "centralus",
-        "eastus",
-        "eastus2",
-        "westus",
-        "northcentralus",
-        "southcentralus",
-        "northeurope",
-        "westeurope",
-        "japanwest",
-        "japaneast",
-        "brazilsouth",
-        "australiaeast",
-        "australiasoutheast",
-        "southindia",
-        "centralindia",
-        "westindia",
-        "canadacentral",
-        "canadaeast",
-        "uksouth",
-        "ukwest",
-        "westcentralus",
-        "westus2"
-      ],
-      "metadata": {
-        "description": "Location of the deployment."
-      }
     },
     "AzureClaimCheck.BaseName": {
       "defaultValue": "AzureClaimCheckDemo",
       "type": "string"
     },
-    //"Client1Name": {
-    //  "defaultValue": "Client1",
-    //  "type": "string"
-    //},
-    //"Message1Name": {
-    //  "defaultValue": "Message1",
-    //  "type": "string"
-    //},
-    //"Message2Name": {
-    //  "defaultValue": "Message2",
-    //  "type": "string"
-    //},
-    //"Message3Name": {
-    //  "defaultValue": "Message3",
-    //  "type": "string"
-    //},
     "ServicePrincipalObjectId": {
       "defaultValue": "c29da76f-0e5c-41a9-8ec7-84dbd6b28033",
       "type": "string"
@@ -89,7 +40,7 @@
       "type": "Microsoft.KeyVault/vaults",
       "name": "[variables('keyVaultName')]",
       "apiVersion": "2016-10-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "tags": {},
       "scale": null,
       "properties": {
@@ -167,7 +118,7 @@
       },
       "name": "[variables('integrationAccountName')]",
       "apiVersion": "2016-06-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {},
       "dependsOn": []
@@ -180,7 +131,7 @@
       },
       "name": "[variables('serviceBusNamespace')]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "tags": {},
       "scale": null,
       "properties": {
@@ -202,7 +153,7 @@
       "kind": "StorageV2",
       "name": "[variables('storageAccountName')]",
       "apiVersion": "2018-03-01-preview",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "tags": {},
       "scale": null,
       "properties": {
@@ -256,7 +207,7 @@
       "type": "Microsoft.KeyVault/vaults/secrets",
       "name": "[concat(variables('keyVaultName'), '/', concat(variables('Client1Name'), variables('Message1Name'), 'StorageKey'))]",
       "apiVersion": "2016-10-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "attributes": {
@@ -273,7 +224,7 @@
       "type": "Microsoft.KeyVault/vaults/secrets",
       "name": "[concat(variables('keyVaultName'), '/', concat(variables('Client1Name'), variables('Message2Name'), 'StorageKey'))]",
       "apiVersion": "2016-10-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "attributes": {
@@ -290,7 +241,7 @@
       "type": "Microsoft.KeyVault/vaults/secrets",
       "name": "[concat(variables('keyVaultName'), '/', concat(variables('Client1Name'), 'StorageKey'))]",
       "apiVersion": "2016-10-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "attributes": {
@@ -307,7 +258,7 @@
       "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
       "name": "[concat(variables('serviceBusNamespace'), '/RootManageSharedAccessKey')]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "rights": [
@@ -324,7 +275,7 @@
       "type": "Microsoft.ServiceBus/namespaces/queues",
       "name": "[concat(variables('serviceBusNamespace'), '/toBiztalk')]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "lockDuration": "PT30S",
@@ -349,7 +300,7 @@
       "type": "Microsoft.ServiceBus/namespaces/topics",
       "name": "[concat(variables('serviceBusNamespace'), '/fromBiztalk')]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "defaultMessageTimeToLive": "P14D",
@@ -393,7 +344,7 @@
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "name": "[concat(variables('serviceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), variables('Message1Name'))]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "lockDuration": "PT1M",
@@ -415,7 +366,7 @@
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "name": "[concat(variables('serviceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), variables('Message2Name'))]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "lockDuration": "PT1M",
@@ -437,7 +388,7 @@
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "name": "[concat(variables('serviceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), variables('Message3Name'))]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "lockDuration": "PT1M",
@@ -459,7 +410,7 @@
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
       "name": "[concat(variables('serviceBusNamespace'), '/fromBiztalk', '/', variables('Client1Name'), '/', variables('Client1Name'))]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "action": {},

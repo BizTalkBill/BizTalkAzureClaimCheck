@@ -7,43 +7,9 @@
       "type": "String",
       "allowedValues": [
         "dev",
-        "stg",
-        "prd"
+        "test",
+        "prod"
       ]
-    },
-    "AzureClaimCheck.Location": {
-      "type": "string",
-      "defaultValue": "australiasoutheast",
-      "allowedValues": [
-        "[resourceGroup().location]",
-        "eastasia",
-        "southeastasia",
-        "centralus",
-        "eastus",
-        "eastus2",
-        "westus",
-        "northcentralus",
-        "southcentralus",
-        "northeurope",
-        "westeurope",
-        "japanwest",
-        "japaneast",
-        "brazilsouth",
-        "australiaeast",
-        "australiasoutheast",
-        "southindia",
-        "centralindia",
-        "westindia",
-        "canadacentral",
-        "canadaeast",
-        "uksouth",
-        "ukwest",
-        "westcentralus",
-        "westus2"
-      ],
-      "metadata": {
-        "description": "Location of the deployment."
-      }
     },
     "AzureClaimCheck.BaseName": {
       "defaultValue": "AzureClaimCheckDemo",
@@ -81,11 +47,11 @@
       "type": "MICROSOFT.WEB/CONNECTIONS",
       "apiVersion": "2016-06-01",
       "name": "azureblob",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "api": {
-          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'), '/managedApis/azureblob')]"
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azureblob')]"
         },
         "displayName": "[variables('storageAccountName')]",
         "parameterValues": {
@@ -99,10 +65,10 @@
       "type": "MICROSOFT.WEB/CONNECTIONS",
       "apiVersion": "2016-06-01",
       "name": "azureeventgrid",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "api": {
-          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'), '/managedApis/', 'azureeventgrid')]"
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'azureeventgrid')]"
         },
         "displayName": "[parameters('AzureClaimCheck.ServicePrincipal.Name')]",
         "parameterValues": {
@@ -117,12 +83,12 @@
       "type": "MICROSOFT.WEB/CONNECTIONS",
       "apiVersion": "2016-06-01",
       "name": "servicebus",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "displayName": "[variables('serviceBusNamespace')]",
         "customParameterValues": {},
         "api": {
-          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'),'/managedApis/servicebus')]"
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location,'/managedApis/servicebus')]"
         },
         "parameterValues": {
           "connectionString": "[listKeys(resourceId('Microsoft.Servicebus/namespaces/authorizationRules', variables('serviceBusNamespace'), 'RootManageSharedAccessKey'), '2014-09-01').primaryConnectionString]"
@@ -134,7 +100,7 @@
       "type": "Microsoft.Logic/workflows",
       "name": "[variables('logicAppName')]",
       "apiVersion": "2017-07-01",
-      "location": "[parameters('AzureClaimCheck.Location')]",
+      "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "LogicApp"
       },
@@ -378,17 +344,17 @@
           "$connections": {
             "value": {
               "azureblob": {
-                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'), '/managedApis/', 'azureblob')]",
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'azureblob')]",
                 "connectionId": "[resourceId('Microsoft.Web/connections', 'azureblob')]",
                 "connectionName": "azureblob"
               },
               "servicebus": {
-                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'), '/managedApis/', 'servicebus')]",
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]",
                 "connectionId": "[resourceId('Microsoft.Web/connections', 'servicebus')]",
                 "connectionName": "servicebus"
               },
               "azureeventgrid": {
-                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('AzureClaimCheck.Location'), '/managedApis/', 'azureeventgrid')]",
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'azureeventgrid')]",
                 "connectionId": "[resourceId('Microsoft.Web/connections', 'azureeventgrid')]",
                 "connectionName": "azureeventgrid"
               }

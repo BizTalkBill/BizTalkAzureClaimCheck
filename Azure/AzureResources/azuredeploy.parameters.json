@@ -3,7 +3,6 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "AzureClaimCheck.Environment.Prefix": { "value": "dev" },
-    "AzureClaimCheck.Location": { "value": "australiasoutheast" },
     "AzureClaimCheck.BaseName": { "value": "AzureClaimCheckDemo" }
   }
 }
