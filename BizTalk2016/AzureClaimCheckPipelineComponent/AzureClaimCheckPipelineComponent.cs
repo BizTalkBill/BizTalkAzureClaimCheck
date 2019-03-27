@@ -30,7 +30,7 @@ namespace BizTalkBill
     [ComponentCategory(CategoryTypes.CATID_PipelineComponent)]
     [ComponentCategory(CategoryTypes.CATID_Decoder)]
     [ComponentCategory(CategoryTypes.CATID_Encoder)]
-    [System.Runtime.InteropServices.Guid("86358C6B-C8E4-4318-B242-5F4DD2C426A3")]
+    [System.Runtime.InteropServices.Guid("9C2F7959-D3D8-4E79-9A22-93FD0F1BBFA7")]
     public class AzureClaimCheckPipelineComponent :
     BaseCustomTypeDescriptor,
         IBaseComponent,
@@ -46,6 +46,7 @@ namespace BizTalkBill
         private string _StorageAccountKey;
         private string _StorageOutboundContainer;
         private string _StorageOutboundFileName;
+        private string _KeyVaultURL;
         private string _KeyVaultClientId;
         private string _KeyVaultClientSecret;
         private string _KeyVaultSecretSufix;
@@ -62,7 +63,8 @@ namespace BizTalkBill
 
         [
         AzureClaimCheckPipelineComponentPropertyName("PropEnabled"),
-        AzureClaimCheckPipelineComponentDescription("DescrEnabled")
+        AzureClaimCheckPipelineComponentDescription("DescrEnabled"),
+        DefaultValue(true)
         ]
         public bool Enabled
         {
@@ -128,6 +130,16 @@ namespace BizTalkBill
         {
             get { return _StorageOutboundFileName; }
             set { _StorageOutboundFileName = value; }
+        }
+
+        [
+        AzureClaimCheckPipelineComponentPropertyName("PropKeyVaultURL"),
+        AzureClaimCheckPipelineComponentDescription("DescrKeyVaultURL")
+        ]
+        public string KeyVaultURL
+        {
+            get { return _KeyVaultURL; }
+            set { _KeyVaultURL = value; }
         }
 
         [
@@ -333,16 +345,19 @@ namespace BizTalkBill
                     // check key vault properties
                     if (!bHaveStorageKey)
                     {
-                        if (!string.IsNullOrEmpty(KeyVaultClientId))
+                        if (!string.IsNullOrEmpty(KeyVaultURL))
                         {
-                            if (!string.IsNullOrEmpty(KeyVaultClientSecret))
+                            if (!string.IsNullOrEmpty(KeyVaultClientId))
                             {
-                                string keyVaultSecret = string.IsNullOrEmpty(ClientId) ? "" : ClientId;
-                                keyVaultSecret += string.IsNullOrEmpty(MessageTypeId) ? "" : MessageTypeId;
-                                keyVaultSecret += string.IsNullOrEmpty(_KeyVaultSecretSufix) ? "" : _KeyVaultSecretSufix;
+                                if (!string.IsNullOrEmpty(KeyVaultClientSecret))
+                                {
+                                    string keyVaultSecret = string.IsNullOrEmpty(ClientId) ? "" : ClientId;
+                                    keyVaultSecret += string.IsNullOrEmpty(MessageTypeId) ? "" : MessageTypeId;
+                                    keyVaultSecret += string.IsNullOrEmpty(_KeyVaultSecretSufix) ? "" : _KeyVaultSecretSufix;
 
-                                string StorageAccountKeyTemp = AzureClaimCheckPipelineComponentHelper.GetKeyVaultSecret(KeyVaultClientId, KeyVaultClientSecret, keyVaultSecret).GetAwaiter().GetResult();
-                                StorageAccountKey = StorageAccountKeyTemp;
+                                    string StorageAccountKeyTemp = AzureClaimCheckPipelineComponentHelper.GetKeyVaultSecret(KeyVaultURL, KeyVaultClientId, KeyVaultClientSecret, keyVaultSecret).GetAwaiter().GetResult();
+                                    StorageAccountKey = StorageAccountKeyTemp;
+                                }
                             }
                         }
                     }
@@ -406,16 +421,19 @@ namespace BizTalkBill
                 // check key vault properties
                 if (!bHaveStorageKey)
                 {
-                    if (!string.IsNullOrEmpty(KeyVaultClientId))
+                    if (!string.IsNullOrEmpty(KeyVaultURL))
                     {
-                        if (!string.IsNullOrEmpty(KeyVaultClientSecret))
+                        if (!string.IsNullOrEmpty(KeyVaultClientId))
                         {
-                            string keyVaultSecret = string.IsNullOrEmpty(ClientId) ? "" : ClientId;
-                            keyVaultSecret += string.IsNullOrEmpty(MessageTypeId) ? "" : MessageTypeId;
-                            keyVaultSecret += string.IsNullOrEmpty(_KeyVaultSecretSufix) ? "" : _KeyVaultSecretSufix;
+                            if (!string.IsNullOrEmpty(KeyVaultClientSecret))
+                            {
+                                string keyVaultSecret = string.IsNullOrEmpty(ClientId) ? "" : ClientId;
+                                keyVaultSecret += string.IsNullOrEmpty(MessageTypeId) ? "" : MessageTypeId;
+                                keyVaultSecret += string.IsNullOrEmpty(_KeyVaultSecretSufix) ? "" : _KeyVaultSecretSufix;
 
-                            string StorageAccountKeyTemp = AzureClaimCheckPipelineComponentHelper.GetKeyVaultSecret(KeyVaultClientId, KeyVaultClientSecret, keyVaultSecret).GetAwaiter().GetResult();
-                            StorageAccountKey = StorageAccountKeyTemp;
+                                string StorageAccountKeyTemp = AzureClaimCheckPipelineComponentHelper.GetKeyVaultSecret(KeyVaultURL, KeyVaultClientId, KeyVaultClientSecret, keyVaultSecret).GetAwaiter().GetResult();
+                                StorageAccountKey = StorageAccountKeyTemp;
+                            }
                         }
                     }
                 }
@@ -474,7 +492,7 @@ namespace BizTalkBill
         /// <param name="classid">Class ID of the component.</param>
         public void GetClassID(out Guid classid)
         {
-            classid = new System.Guid("86358C6B-C8E4-4318-B242-5F4DD2C426A3");
+            classid = new System.Guid("9C2F7959-D3D8-4E79-9A22-93FD0F1BBFA7");
         }
 
         /// <summary>
@@ -497,6 +515,10 @@ namespace BizTalkBill
             {
                 this._Enabled = ((bool)(val));
             }
+            else
+            {
+                this._Enabled = true;
+            }
             val = ReadPropertyBag(propertyBag, "ClientId");
             if ((val != null))
             {
@@ -516,6 +538,11 @@ namespace BizTalkBill
             if ((val != null))
             {
                 this._StorageAccountKey = ((string)(val));
+            }
+            val = ReadPropertyBag(propertyBag, "KeyVaultURL");
+            if ((val != null))
+            {
+                this._KeyVaultURL = ((string)(val));
             }
             val = ReadPropertyBag(propertyBag, "KeyVaultClientId");
             if ((val != null))
@@ -558,6 +585,7 @@ namespace BizTalkBill
             WritePropertyBag(propertyBag, "MessageTypeId", this.MessageTypeId);
             WritePropertyBag(propertyBag, "StorageAccountName", this.StorageAccountName);
             WritePropertyBag(propertyBag, "StorageAccountKey", this.StorageAccountKey);
+            WritePropertyBag(propertyBag, "KeyVaultURL", this.KeyVaultURL);
             WritePropertyBag(propertyBag, "KeyVaultClientId", this.KeyVaultClientId);
             WritePropertyBag(propertyBag, "KeyVaultClientSecret", this.KeyVaultClientSecret);
             WritePropertyBag(propertyBag, "KeyVaultSecretSufix", this.KeyVaultSecretSufix);

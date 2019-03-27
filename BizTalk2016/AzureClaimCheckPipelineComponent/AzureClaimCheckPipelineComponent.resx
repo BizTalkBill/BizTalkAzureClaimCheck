@@ -214,4 +214,10 @@
   <data name="PropStorageOutboundFileName" xml:space="preserve">
     <value>Azure Storage Outbound File Name</value>
   </data>
+  <data name="DescrKeyVaultURL" xml:space="preserve">
+    <value>URL Azure Key Vault (optional)</value>
+  </data>
+  <data name="PropKeyVaultURL" xml:space="preserve">
+    <value>Azure Key Vault URL</value>
+  </data>
 </root>
